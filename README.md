@@ -4,5 +4,5 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/247f92dd006c542af5fb/test_coverage)](https://codeclimate.com/github/AlexVin11/java-project-72/test_coverage)
 
 # Project overview
-Check my first deployd project here!
+Check my first deployed project here!
 https://seo-page-analyzer-lall.onrender.com
