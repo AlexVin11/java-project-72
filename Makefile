@@ -1,6 +1,5 @@
 # Makefile
 
-
 install:
 	make -C app install
 
