@@ -9,14 +9,14 @@ import java.sql.SQLException;
 public class App {
     public static void main(String[] args) throws IOException, SQLException {
         var app = getApp();
-        app.get(NamedRoutes.rootPath(), ctx ->
-                ctx.result("Hello, world!"));
         app.start(getPort());
     }
     public static Javalin getApp() throws IOException, SQLException {
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
         });
+        app.get(NamedRoutes.rootPath(), ctx ->
+                ctx.result("Hello, world!"));
         return app;
     }
 
