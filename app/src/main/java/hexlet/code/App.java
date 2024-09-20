@@ -1,5 +1,7 @@
 package hexlet.code;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 
@@ -15,6 +17,9 @@ public class App {
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
         });
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        var dataSource = new HikariDataSource(hikariConfig);
         app.get(NamedRoutes.rootPath(), ctx ->
                 ctx.result("Hello, world!"));
         return app;
