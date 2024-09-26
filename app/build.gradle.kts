@@ -31,6 +31,7 @@ dependencies {
     implementation("gg.jte:jte:3.1.12")
     // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     implementation("com.zaxxer:HikariCP:5.1.0")
+    implementation("com.h2database:h2:2.2.220")
 }
 
 tasks.test {
