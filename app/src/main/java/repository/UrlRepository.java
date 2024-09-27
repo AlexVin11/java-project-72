@@ -12,7 +12,7 @@ public class UrlRepository extends BaseRepository {
     private static List<Url> entities = new ArrayList<>();
 
     public static void save(Url url) throws SQLException {
-        String sql = "INSERT INTO urls (name) VALUES(?)";
+        String sql = "INSERT INTO urls (name) VALUES ('?')";
         try (var conn = dataSource.getConnection();
         var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, url.getName());
@@ -24,6 +24,16 @@ public class UrlRepository extends BaseRepository {
             } else {
                 throw new SQLException("DB have not returned an id or createdAt after saving an entity");
             }
+        }
+    }
+
+    public static void update(String name) throws SQLException {
+        String sql = "UPDATE urls SET createdAt = DEFAULT WHERE name = '?'";
+        //String sql = "UPDATE urls SET createdAt = CURRENT_TIMESTAMP WHERE name = '?'";
+        try (var conn = dataSource.getConnection();
+        var preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.executeUpdate();
         }
     }
 
@@ -60,6 +70,15 @@ public class UrlRepository extends BaseRepository {
                 return Optional.of(url);
             }
             return Optional.empty();
+        }
+    }
+
+    public static void destroy(String name) throws SQLException{
+        String sql = "DELETE FROM urls WHERE name = '?'";
+        try (var conn = dataSource.getConnection();
+        var preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.execute();
         }
     }
 
