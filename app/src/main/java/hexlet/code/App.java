@@ -2,8 +2,12 @@ package hexlet.code;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
+import io.javalin.rendering.template.JavalinJte;
 import repository.BaseRepository;
 
 import java.io.BufferedReader;
@@ -13,7 +17,7 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class App {
-    private static final String LOCAL_H2_BASE = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;";
+    private static final String LOCAL_H2_BASE = "jdbc:h2:mem:project;";
 
     public static void main(String[] args) throws IOException, SQLException {
         var app = getApp();
@@ -32,6 +36,7 @@ public class App {
         }
         BaseRepository.dataSource = dataSource;
         var app = Javalin.create(config -> {
+            config.fileRenderer(new JavalinJte(createTemplateEngine()));
             config.bundledPlugins.enableDevLogging();
         });
         app.get(NamedRoutes.rootPath(), ctx ->
@@ -46,5 +51,12 @@ public class App {
 
     public static String getDbConfig() {
         return System.getenv().getOrDefault("JDBC_DATABASE_URL", LOCAL_H2_BASE);
+    }
+
+    public static TemplateEngine createTemplateEngine() {
+        ClassLoader classLoader = App.class.getClassLoader();
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        TemplateEngine templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        return templateEngine;
     }
 }
