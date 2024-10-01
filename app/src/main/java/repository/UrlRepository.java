@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class UrlRepository extends BaseRepository {
-    private static List<Url> entities = new ArrayList<>();
 
     public static void save(Url url) throws SQLException {
         String sql = "INSERT INTO urls (name) VALUES ('?')";
@@ -19,15 +18,23 @@ public class UrlRepository extends BaseRepository {
             preparedStatement.executeUpdate();
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                url.setId(generatedKeys.getLong("id"));
-                url.setCreatedAt(generatedKeys.getTimestamp("createdAt"));
+                url.setId(generatedKeys.getLong(1));
+                url.setCreatedAt(generatedKeys.getTimestamp(2));
             } else {
                 throw new SQLException("DB have not returned an id or createdAt after saving an entity");
             }
         }
     }
 
-    public static void update(String name) throws SQLException {
+    public static void update(Url url) throws SQLException {
+        String sql = "UPDATE urls SET createdAt = NOW() WHERE name = '?'";
+        try (var conn = dataSource.getConnection();
+             var preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, url.getName());
+            preparedStatement.executeUpdate();
+        }
+    }
+    /*public static void update(String name) throws SQLException {
         String sql = "UPDATE urls SET createdAt = DEFAULT WHERE name = '?'";
         //String sql = "UPDATE urls SET createdAt = CURRENT_TIMESTAMP WHERE name = '?'";
         try (var conn = dataSource.getConnection();
@@ -35,49 +42,51 @@ public class UrlRepository extends BaseRepository {
             preparedStatement.setString(1, name);
             preparedStatement.executeUpdate();
         }
-    }
+    }*/
 
-    public static Optional<Url> findById(Long id) throws SQLException {
+    public static Optional<Url> findById(Url url) throws SQLException {
         String sql = "SELECT * FROM urls WHERE id = ?";
         try (var conn = dataSource.getConnection();
         var preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.setLong(1, id);
+            preparedStatement.setLong(1, url.getId());
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 var resultName = resultSet.getString("name");
                 var resultCreatedAt = resultSet.getTimestamp("createdAt");
-                Url url = new Url(resultName);
-                url.setId(id);
+                var resultId = resultSet.getLong("id");
+                Url resUrl = new Url(resultName);
+                url.setId(resultId);
                 url.setCreatedAt(resultCreatedAt);
-                return Optional.of(url);
+                return Optional.of(resUrl);
             }
             return Optional.empty();
         }
     }
 
-    public static Optional<Url> findByName(String name) throws SQLException {
+    public static Optional<Url> findByName(Url url) throws SQLException {
         String sql = "SELECT * FROM urls WHERE name = '?'";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.setString(1, name);
+            preparedStatement.setString(1, url.getName());
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
+                var resultName = resultSet.getString("name");
                 var resultId = resultSet.getLong("id");
                 var resultCreatedAt = resultSet.getTimestamp("createdAt");
-                Url url = new Url(name);
+                Url resUrl = new Url(resultName);
                 url.setId(resultId);
                 url.setCreatedAt(resultCreatedAt);
-                return Optional.of(url);
+                return Optional.of(resUrl);
             }
             return Optional.empty();
         }
     }
 
-    public static void destroy(String name) throws SQLException{
+    public static void destroy(Url url) throws SQLException{
         String sql = "DELETE FROM urls WHERE name = '?'";
         try (var conn = dataSource.getConnection();
         var preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.setString(1, name);
+            preparedStatement.setString(1, url.getName());
             preparedStatement.execute();
         }
     }
