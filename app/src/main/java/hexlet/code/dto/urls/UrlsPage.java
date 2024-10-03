@@ -1,4 +1,4 @@
-package hexlet.code.dto.url;
+package hexlet.code.dto.urls;
 
 import hexlet.code.model.Url;
 import lombok.AllArgsConstructor;
