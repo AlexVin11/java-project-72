@@ -13,7 +13,7 @@ public class UrlRepository extends BaseRepository {
     public static void save(Url url) throws SQLException {
         String sql = "INSERT INTO urls (name) VALUES ('?')";
         try (var conn = dataSource.getConnection();
-        var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, url.getName());
             preparedStatement.executeUpdate();
             var generatedKeys = preparedStatement.getGeneratedKeys();
@@ -47,7 +47,7 @@ public class UrlRepository extends BaseRepository {
     public static Optional<Url> findById(Url url) throws SQLException {
         String sql = "SELECT * FROM urls WHERE id = ?";
         try (var conn = dataSource.getConnection();
-        var preparedStatement = conn.prepareStatement(sql)) {
+            var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, url.getId());
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -82,10 +82,10 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static void destroy(Url url) throws SQLException{
+    public static void destroy(Url url) throws SQLException {
         String sql = "DELETE FROM urls WHERE name = '?'";
         try (var conn = dataSource.getConnection();
-        var preparedStatement = conn.prepareStatement(sql)) {
+            var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, url.getName());
             preparedStatement.execute();
         }
@@ -94,7 +94,7 @@ public class UrlRepository extends BaseRepository {
     public static List<Url> getEntities() throws SQLException {
         String sql = "SELECT * FROM urls";
         try (var conn = dataSource.getConnection();
-        var preparedStatement = conn.prepareStatement(sql)) {
+            var preparedStatement = conn.prepareStatement(sql)) {
             var resultSet = preparedStatement.executeQuery();
             var result = new ArrayList<Url>();
             while (resultSet.next()) {

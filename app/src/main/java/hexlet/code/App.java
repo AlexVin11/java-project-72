@@ -21,9 +21,9 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class App {
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
-    private static final String LOCAL_H2_BASE = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;" +
-            "INIT=runscript from 'classpath:/schema.sql'";
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
+    private static final String LOCAL_H2_BASE = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;"
+            + "INIT=runscript from 'classpath:/schema.sql'";
 
     public static void main(String[] args) throws IOException, SQLException {
         var app = getApp();
