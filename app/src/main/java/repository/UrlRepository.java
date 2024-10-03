@@ -11,7 +11,7 @@ import java.util.Optional;
 public class UrlRepository extends BaseRepository {
 
     public static void save(Url url) throws SQLException {
-        String sql = "INSERT INTO urls (name) VALUES ('?')";
+        String sql = "INSERT INTO urls (name) VALUES (?)";
         try (var conn = dataSource.getConnection();
             var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, url.getName());
@@ -80,6 +80,11 @@ public class UrlRepository extends BaseRepository {
             }
             return Optional.empty();
         }
+    }
+
+    public static boolean urlExists(Url url) throws SQLException {
+        List<Url> urls = UrlRepository.getEntities();
+        return urls.contains(url);
     }
 
     public static void destroy(Url url) throws SQLException {
