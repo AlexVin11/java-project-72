@@ -5,6 +5,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
+import hexlet.code.controller.RootController;
+import hexlet.code.controller.UrlController;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -40,11 +42,13 @@ public class App {
         }
         BaseRepository.dataSource = dataSource;
         var app = Javalin.create(config -> {
-            config.fileRenderer(new JavalinJte(createTemplateEngine()));
+            config.fileRenderer(new JavalinJte());
             config.bundledPlugins.enableDevLogging();
         });
-        app.get(NamedRoutes.rootPath(), ctx ->
-                ctx.result("Hello, world!"));
+        /*app.get(NamedRoutes.rootPath(), ctx ->
+                ctx.result("Hello, world!"));*/
+        app.get(NamedRoutes.rootPath(), RootController::index);
+        app.get(NamedRoutes.urlsPath(), UrlController::show);
         return app;
     }
 
