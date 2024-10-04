@@ -44,38 +44,38 @@ public class UrlRepository extends BaseRepository {
         }
     }*/
 
-    public static Optional<Url> findById(Url url) throws SQLException {
+    public static Optional<Url> findById(Long id) throws SQLException {
         String sql = "SELECT * FROM urls WHERE id = ?";
         try (var conn = dataSource.getConnection();
             var preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.setLong(1, url.getId());
+            preparedStatement.setLong(1, id);
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 var resultName = resultSet.getString("name");
                 var resultCreatedAt = resultSet.getTimestamp("createdAt");
                 var resultId = resultSet.getLong("id");
                 Url resUrl = new Url(resultName);
-                url.setId(resultId);
-                url.setCreatedAt(resultCreatedAt);
+                resUrl.setId(resultId);
+                resUrl.setCreatedAt(resultCreatedAt);
                 return Optional.of(resUrl);
             }
             return Optional.empty();
         }
     }
 
-    public static Optional<Url> findByName(Url url) throws SQLException {
+    public static Optional<Url> findByName(String name) throws SQLException {
         String sql = "SELECT * FROM urls WHERE name = ?";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.setString(1, url.getName());
+            preparedStatement.setString(1, name);
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 var resultName = resultSet.getString("name");
                 var resultId = resultSet.getLong("id");
                 var resultCreatedAt = resultSet.getTimestamp("createdAt");
                 Url resUrl = new Url(resultName);
-                url.setId(resultId);
-                url.setCreatedAt(resultCreatedAt);
+                resUrl.setId(resultId);
+                resUrl.setCreatedAt(resultCreatedAt);
                 return Optional.of(resUrl);
             }
             return Optional.empty();
