@@ -27,7 +27,7 @@ public class UrlRepository extends BaseRepository {
     }
 
     public static void update(Url url) throws SQLException {
-        String sql = "UPDATE urls SET createdAt = NOW() WHERE name = '?'";
+        String sql = "UPDATE urls SET createdAt = NOW() WHERE name = ?";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, url.getName());
@@ -64,7 +64,7 @@ public class UrlRepository extends BaseRepository {
     }
 
     public static Optional<Url> findByName(Url url) throws SQLException {
-        String sql = "SELECT * FROM urls WHERE name = '?'";
+        String sql = "SELECT * FROM urls WHERE name = ?";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, url.getName());
@@ -82,13 +82,8 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static boolean urlExists(Url url) throws SQLException {
-        List<Url> urls = UrlRepository.getEntities();
-        return urls.contains(url);
-    }
-
     public static void destroy(Url url) throws SQLException {
-        String sql = "DELETE FROM urls WHERE name = '?'";
+        String sql = "DELETE FROM urls WHERE name = ?";
         try (var conn = dataSource.getConnection();
             var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, url.getName());
