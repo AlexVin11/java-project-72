@@ -48,7 +48,7 @@ public class App {
         /*app.get(NamedRoutes.rootPath(), ctx ->
                 ctx.result("Hello, world!"));*/
         app.get(NamedRoutes.rootPath(), RootController::index);
-        app.get(NamedRoutes.urlsPath(), UrlController::show);
+        app.get(NamedRoutes.urlsPath(), UrlController::index);
         app.post(NamedRoutes.urlsPath(), UrlController::add);
         return app;
     }
