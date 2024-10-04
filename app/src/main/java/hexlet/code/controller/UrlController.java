@@ -52,7 +52,7 @@ public class UrlController {
             ctx.redirect(NamedRoutes.urlsPath());
         } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
-            //ctx.redirect(NamedRoutes.urlsPath());
+            ctx.redirect(NamedRoutes.rootPath());
         }
     }
 }
