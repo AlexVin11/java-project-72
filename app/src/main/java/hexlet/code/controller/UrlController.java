@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -29,15 +30,15 @@ public class UrlController {
         var name = ctx.formParam("url");
         try {
             URL absoluteUrl = new URI(name).toURL();
-            String schema = absoluteUrl.getProtocol();
-            String host = absoluteUrl.getHost();
-            String port = String.valueOf(absoluteUrl.getPort());
-            Url url = new Url(schema + "//" + host + ":" + port);
-            UrlRepository.save(url);
-            if (UrlRepository.urlExists(url)) {
-                ctx.sessionAttribute("flash", "Страница уже существует");
-            } else {
+            String schema = absoluteUrl.toURI().getScheme();
+            String authority = absoluteUrl.toURI().getAuthority();
+            Url url = new Url(schema + "://" + authority);
+            Optional<Url> foundedUrl = UrlRepository.findByName(url);
+            if (foundedUrl.isEmpty()) {
+                UrlRepository.save(url);
                 ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            } else {
+                ctx.sessionAttribute("flash", "Страница уже существует");
             }
             ctx.redirect(NamedRoutes.urlsPath());
         } catch (URISyntaxException | MalformedURLException e) {
