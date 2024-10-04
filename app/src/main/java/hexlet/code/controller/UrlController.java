@@ -16,6 +16,14 @@ import java.util.Optional;
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlController {
+    public static void index(Context ctx) throws SQLException {
+        var urls = UrlRepository.getEntities();
+        var page = new UrlsPage(urls);
+        String flash = ctx.consumeSessionAttribute("flash");
+        page.setFlash(flash);
+        ctx.render("urls/index.jte", model("page", page));
+    }
+
     public static void show(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
         var page = new UrlsPage(urls);
@@ -26,7 +34,8 @@ public class UrlController {
 
     public static void add(Context ctx) throws SQLException,
             MalformedURLException,
-            URISyntaxException {
+            URISyntaxException,
+            IllegalArgumentException {
         var name = ctx.formParam("url");
         try {
             URL absoluteUrl = new URI(name).toURL();
@@ -41,9 +50,9 @@ public class UrlController {
                 ctx.sessionAttribute("flash", "Страница уже существует");
             }
             ctx.redirect(NamedRoutes.urlsPath());
-        } catch (URISyntaxException | MalformedURLException e) {
+        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.redirect(NamedRoutes.urlsPath());
+            //ctx.redirect(NamedRoutes.urlsPath());
         }
     }
 }
