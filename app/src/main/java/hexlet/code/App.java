@@ -45,11 +45,10 @@ public class App {
             config.fileRenderer(new JavalinJte());
             config.bundledPlugins.enableDevLogging();
         });
-        /*app.get(NamedRoutes.rootPath(), ctx ->
-                ctx.result("Hello, world!"));*/
         app.get(NamedRoutes.rootPath(), RootController::index);
         app.get(NamedRoutes.urlsPath(), UrlController::index);
         app.post(NamedRoutes.urlsPath(), UrlController::add);
+        app.get(NamedRoutes.urlPath("{id}"), UrlController::show);
         return app;
     }
 
