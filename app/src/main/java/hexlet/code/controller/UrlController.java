@@ -1,9 +1,11 @@
 package hexlet.code.controller;
 
+import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
 import hexlet.code.model.Url;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
+import io.javalin.http.NotFoundResponse;
 import repository.UrlRepository;
 
 import java.net.MalformedURLException;
@@ -25,10 +27,10 @@ public class UrlController {
     }
 
     public static void show(Context ctx) throws SQLException {
-        var urls = UrlRepository.getEntities();
-        var page = new UrlsPage(urls);
-        String flash = ctx.consumeSessionAttribute("flash");
-        page.setFlash(flash);
+        var id = ctx.pathParamAsClass("id", Long.class).get();
+        var url = UrlRepository.findById(id)
+                .orElseThrow(() -> new NotFoundResponse("Url not found"));
+        var page = new UrlPage(url);
         ctx.render("urls/show.jte", model("page", page));
     }
 
@@ -42,7 +44,7 @@ public class UrlController {
             String schema = absoluteUrl.toURI().getScheme();
             String authority = absoluteUrl.toURI().getAuthority();
             Url url = new Url(schema + "://" + authority);
-            Optional<Url> foundedUrl = UrlRepository.findByName(url);
+            Optional<Url> foundedUrl = UrlRepository.findByName(url.getName());
             if (foundedUrl.isEmpty()) {
                 UrlRepository.save(url);
                 ctx.sessionAttribute("flash", "Страница успешно добавлена");
