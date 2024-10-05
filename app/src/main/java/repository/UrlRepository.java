@@ -1,6 +1,7 @@
 package repository;
 
 import hexlet.code.model.Url;
+import hexlet.code.util.TimestampFormatter;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,6 +21,7 @@ public class UrlRepository extends BaseRepository {
             if (generatedKeys.next()) {
                 url.setId(generatedKeys.getLong(1));
                 url.setCreatedAt(generatedKeys.getTimestamp(2));
+                url.setFormattedTimestamp(TimestampFormatter.dateFormatter(url.getCreatedAt()));
             } else {
                 throw new SQLException("DB have not returned an id or createdAt after saving an entity");
             }
@@ -57,6 +59,7 @@ public class UrlRepository extends BaseRepository {
                 Url resUrl = new Url(resultName);
                 resUrl.setId(resultId);
                 resUrl.setCreatedAt(resultCreatedAt);
+                resUrl.setFormattedTimestamp(TimestampFormatter.dateFormatter(resUrl.getCreatedAt()));
                 return Optional.of(resUrl);
             }
             return Optional.empty();
@@ -76,6 +79,7 @@ public class UrlRepository extends BaseRepository {
                 Url resUrl = new Url(resultName);
                 resUrl.setId(resultId);
                 resUrl.setCreatedAt(resultCreatedAt);
+                resUrl.setFormattedTimestamp(TimestampFormatter.dateFormatter(resUrl.getCreatedAt()));
                 return Optional.of(resUrl);
             }
             return Optional.empty();
