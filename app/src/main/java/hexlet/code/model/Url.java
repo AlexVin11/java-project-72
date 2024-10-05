@@ -18,6 +18,8 @@ public final class Url {
     @ToString.Include
     private String name;
     private Timestamp createdAt;
+    @ToString.Exclude
+    private String formattedTimestamp;
 
     public Url(String name) {
         this.name = name;
