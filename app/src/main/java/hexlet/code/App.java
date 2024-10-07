@@ -10,8 +10,6 @@ import hexlet.code.controller.UrlController;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import repository.BaseRepository;
 
 import java.io.BufferedReader;
@@ -21,7 +19,6 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class App {
-    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
     private static final String LOCAL_H2_BASE = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;"
             + "INIT=runscript from 'classpath:/schema.sql'";
 
@@ -42,7 +39,7 @@ public class App {
         }
         BaseRepository.dataSource = dataSource;
         var app = Javalin.create(config -> {
-            config.fileRenderer(new JavalinJte());
+            config.fileRenderer(new JavalinJte(createTemplateEngine()));
             config.bundledPlugins.enableDevLogging();
         });
         app.get(NamedRoutes.rootPath(), RootController::index);
