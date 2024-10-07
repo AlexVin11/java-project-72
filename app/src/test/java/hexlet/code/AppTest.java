@@ -19,7 +19,7 @@ public class AppTest {
 
     @BeforeEach
     public void runApp() throws SQLException, IOException {
-       app = App.getApp();
+        app = App.getApp();
     }
 
     @Test
