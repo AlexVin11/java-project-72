@@ -24,8 +24,12 @@ application {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.assertj:assertj-core:3.26.3")
+    testImplementation("org.mockito:mockito-core:5.13.0")
     implementation("io.javalin:javalin:6.3.0")
     implementation("io.javalin:javalin-rendering:6.3.0")
+    implementation("io.javalin:javalin-bundle:6.3.0")
+    implementation("io.javalin:javalin-testtools:6.3.0")
     implementation("org.slf4j:slf4j-simple:2.0.16")
     // https://mvnrepository.com/artifact/gg.jte/jte
     implementation("gg.jte:jte:3.1.12")
