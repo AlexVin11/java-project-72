@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 
 public class AppTest {
     private final Context ctx = mock(Context.class);
-    private static Javalin app;
+    Javalin app;
 
     @BeforeEach
     public void runApp() throws SQLException, IOException {
