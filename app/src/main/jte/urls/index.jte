@@ -5,7 +5,7 @@
 content = @`
     <section>
         @if(page.getFlash() != null)
-            <div class="rounded-0 m-0 alert alert-dismissible fade show alert-success" role="alert">
+            <div class="rounded-0 m-0 alert alert-dismissible fade show ${page.getFlashType()}" role="alert">
                 <p class="m-0">${page.getFlash()}</p>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -30,14 +30,21 @@ content = @`
                                 <td>
                                     <a href="/urls/${url.getId()}">${url.getName()}</a>
                                 </td>
-                                <td>
-                                    пока что тут ничего
-                                    <!-- ${url.getLastCheck()} -->
-                                </td>
-                                <td>
-                                    пока что тут ничего
-                                    <!-- ${url.getCheckCode()} -->
-                                </td>
+                                @if(url.getChecks().isEmpty())
+                                    <td>
+
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                @else
+                                    <td>
+                                        ${url.getLastCheckTimeStamp()}
+                                    </td>
+                                    <td>
+                                        ${url.getLastCheckStatusCode()}
+                                    </td>
+                                @endif
                             </tr>
                         @endfor
                     </tbody>
