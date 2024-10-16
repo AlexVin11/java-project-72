@@ -28,24 +28,6 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static void update(Url url) throws SQLException {
-        String sql = "UPDATE urls SET createdAt = NOW() WHERE name = ?";
-        try (var conn = dataSource.getConnection();
-             var preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.setString(1, url.getName());
-            preparedStatement.executeUpdate();
-        }
-    }
-    /*public static void update(String name) throws SQLException {
-        String sql = "UPDATE urls SET createdAt = DEFAULT WHERE name = '?'";
-        //String sql = "UPDATE urls SET createdAt = CURRENT_TIMESTAMP WHERE name = '?'";
-        try (var conn = dataSource.getConnection();
-        var preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.setString(1, name);
-            preparedStatement.executeUpdate();
-        }
-    }*/
-
     public static Optional<Url> findById(Long id) throws SQLException {
         String sql = "SELECT * FROM urls WHERE id = ?";
         try (var conn = dataSource.getConnection();
@@ -54,7 +36,7 @@ public class UrlRepository extends BaseRepository {
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 var resultName = resultSet.getString("name");
-                var resultCreatedAt = resultSet.getTimestamp("createdAt");
+                var resultCreatedAt = resultSet.getTimestamp("created_at");
                 var resultId = resultSet.getLong("id");
                 Url resUrl = new Url(resultName);
                 resUrl.setId(resultId);
@@ -75,7 +57,7 @@ public class UrlRepository extends BaseRepository {
             if (resultSet.next()) {
                 var resultName = resultSet.getString("name");
                 var resultId = resultSet.getLong("id");
-                var resultCreatedAt = resultSet.getTimestamp("createdAt");
+                var resultCreatedAt = resultSet.getTimestamp("created_at");
                 Url resUrl = new Url(resultName);
                 resUrl.setId(resultId);
                 resUrl.setCreatedAt(resultCreatedAt);
@@ -105,7 +87,7 @@ public class UrlRepository extends BaseRepository {
                 var name = resultSet.getString("name");
                 var url = new Url(name);
                 url.setId(resultSet.getLong("id"));
-                url.setCreatedAt(resultSet.getTimestamp("createdAt"));
+                url.setCreatedAt(resultSet.getTimestamp("created_at"));
                 result.add(url);
             }
             return result;
