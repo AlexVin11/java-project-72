@@ -8,9 +8,11 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import repository.UrlCheckRepository;
 import repository.UrlRepository;
 
@@ -74,19 +76,27 @@ public class UrlController {
         Url url = UrlRepository.findById(urlId)
                 .orElseThrow(() -> new NotFoundResponse("Url not found"));
         try {
-            HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).asJson();
-            int statusCode = jsonResponse.getStatus();
-            String h1 = jsonResponse.getBody().getObject().getString("h1");
-            String title = jsonResponse.getBody().getObject().getString("title");
-            String description = jsonResponse.getBody().getObject().getString("description");
-            UrlCheck urlCheck = new UrlCheck();
-            urlCheck.setStatusCode(statusCode);
-            urlCheck.setH1(h1);
-            urlCheck.setTitle(title);
-            urlCheck.setDescription(description);
-            UrlCheckRepository.save(urlCheck, url);
+            HttpResponse<String> httpResponse = Unirest.get(url.getName()).asString();
+            if (httpResponse.getStatus() != 200) {
+                throw new UnirestException("Url: " + url.getName()
+                        + "return non 200 code. Status is: " + httpResponse.getStatus());
+            } else {
+                int statusCode = httpResponse.getStatus();
+                String responseBody = httpResponse.getBody();
+                Document document = Jsoup.parse(responseBody);
+                String title = document.title();
+                Element firstH1 = document.selectFirst("h1");
+                String h1 = (firstH1 != null) ? firstH1.text() : null;
+                String description = document.select("meta[name=description]").attr("content");
+                UrlCheck urlCheck = new UrlCheck();
+                urlCheck.setStatusCode(statusCode);
+                urlCheck.setH1(h1);
+                urlCheck.setTitle(title);
+                urlCheck.setDescription(description);
+                UrlCheckRepository.save(urlCheck, url);
+            }
         } catch (UnirestException e) {
-            throw new UnirestException(e);
+            throw new UnirestException("Error during URL check: " + e.getMessage(), e);
         }
     }
 }

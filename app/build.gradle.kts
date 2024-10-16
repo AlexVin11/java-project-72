@@ -39,6 +39,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("com.konghq:unirest-java:3.14.5")
     implementation("com.konghq:unirest-objectmapper-jackson:4.2.9")
+    implementation("org.jsoup:jsoup:1.18.1")
 }
 
 tasks.test {
