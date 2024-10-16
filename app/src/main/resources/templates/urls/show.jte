@@ -23,7 +23,7 @@ content = @`
                 </tbody>
             </table>
             <h2 class="mt-5">Проверки</h2>
-            <form method="post" action="/urls/{id}/checks">
+            <form method="post" action="/urls/${page.getUrl().getId()}/checks">
                 <button type="submit" class="btn btn-primary">Запустить проверку</button>
             </form>
             <table class="table table-bordered table-hover mt-3">
@@ -37,6 +37,32 @@ content = @`
                     </tr>
                 </thead>
                 <tbody>
+                    @if(page.getUrl().getChecks().isEmpty())
+
+                    @else
+                        @for(var check : page.getUrl().getChecks())
+                            <tr>
+                                <td>
+                                    ${check.getId()}
+                                </td>
+                                <td>
+                                    ${check.getStatusCode()}
+                                </td>
+                                <td>
+                                    ${check.getTitle()}
+                                </td>
+                                <td>
+                                    ${check.getH1()}
+                                </td>
+                                <td>
+                                    ${check.getDescription()}
+                                </td>
+                                <td>
+                                    ${check.getFormattedTimestamp()}
+                                </td>
+                            </tr>
+                        @endfor
+                    @endif
                 </tbody>
             </table>
         </div>
