@@ -26,6 +26,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation("org.mockito:mockito-core:5.13.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     implementation("io.javalin:javalin:6.3.0")
     implementation("io.javalin:javalin-rendering:6.3.0")
     implementation("io.javalin:javalin-bundle:6.3.0")
