@@ -1,6 +1,7 @@
 package repository;
 
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.util.TimestampFormatter;
 
 import java.sql.SQLException;
@@ -42,6 +43,8 @@ public class UrlRepository extends BaseRepository {
                 resUrl.setId(resultId);
                 resUrl.setCreatedAt(resultCreatedAt);
                 resUrl.setFormattedTimestamp(TimestampFormatter.dateFormatter(resUrl.getCreatedAt()));
+                List<UrlCheck> checks = UrlCheckRepository.findByUrlId(resultId);
+                resUrl.setChecks(checks);
                 return Optional.of(resUrl);
             }
             return Optional.empty();
@@ -68,17 +71,8 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static void destroy(Url url) throws SQLException {
-        String sql = "DELETE FROM urls WHERE name = ?";
-        try (var conn = dataSource.getConnection();
-            var preparedStatement = conn.prepareStatement(sql)) {
-            preparedStatement.setString(1, url.getName());
-            preparedStatement.execute();
-        }
-    }
-
     public static List<Url> getEntities() throws SQLException {
-        String sql = "SELECT * FROM urls";
+        String sql = "SELECT * FROM urls ORDER BY created_at ASC";
         try (var conn = dataSource.getConnection();
             var preparedStatement = conn.prepareStatement(sql)) {
             var resultSet = preparedStatement.executeQuery();
