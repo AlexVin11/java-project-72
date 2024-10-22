@@ -30,21 +30,22 @@ content = @`
                                 <td>
                                     <a href="/urls/${url.getId()}">${url.getName()}</a>
                                 </td>
-                                @if(url.getChecks().isEmpty())
+                                @if(page.getChecks().isEmpty())
                                     <td>
-
                                     </td>
                                     <td>
-
-                                    </td>
-                                @else
-                                    <td>
-                                        ${url.getLastCheckTimeStamp()}
-                                    </td>
-                                    <td>
-                                        ${url.getLastCheckStatusCode()}
                                     </td>
                                 @endif
+                                @for(var check : page.getChecks())
+                                    @if(check.getUrlId() == url.getId())
+                                        <td>
+                                            ${check.getFormattedTimestamp()}
+                                        </td>
+                                        <td>
+                                            ${check.getStatusCode()}
+                                        </td>
+                                    @endif
+                                @endfor
                             </tr>
                         @endfor
                     </tbody>
