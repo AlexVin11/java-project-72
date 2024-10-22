@@ -6,55 +6,65 @@ import hexlet.code.util.TimestampFormatter;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class UrlCheckRepository extends BaseRepository {
 
     public static void save(UrlCheck urlCheck, Url url) throws SQLException {
-        String sql = "INSERT INTO url_check (status_code, title, h1, description)"
-                + " VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id)"
+                + " VALUES (?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setInt(1, urlCheck.getStatusCode());
             preparedStatement.setString(2, urlCheck.getTitle());
             preparedStatement.setString(3, urlCheck.getH1());
             preparedStatement.setString(4, urlCheck.getDescription());
+            preparedStatement.setLong(5, url.getId());
             preparedStatement.executeUpdate();
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 urlCheck.setId(generatedKeys.getLong(1));
                 urlCheck.setCreatedAt(generatedKeys.getTimestamp(2));
                 urlCheck.setFormattedTimestamp(TimestampFormatter.dateFormatter(urlCheck.getCreatedAt()));
-                url.addCheck(urlCheck);
             } else {
                 throw new SQLException("DB have not returned an id or createdAt after saving an entity");
             }
         }
     }
 
-    /*public static Optional<Url> findById(Long id) throws SQLException {
-        String sql = "SELECT * FROM urls WHERE id = ?";
+    public static List<UrlCheck> findByUrlId(Long id) throws SQLException {
+        String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC";
+        var listOfChecks = new LinkedList<UrlCheck>();
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             var resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                var resultName = resultSet.getString("name");
+            while (resultSet.next()) {
+                var resultStatusCode = resultSet.getInt("status_code");
+                var resultTitle = resultSet.getString("title");
+                var resultH1 = resultSet.getString("h1");
+                var resultDescription = resultSet.getString("description");
                 var resultCreatedAt = resultSet.getTimestamp("created_at");
                 var resultId = resultSet.getLong("id");
-                Url resUrl = new Url(resultName);
-                resUrl.setId(resultId);
-                resUrl.setCreatedAt(resultCreatedAt);
-                resUrl.setFormattedTimestamp(TimestampFormatter.dateFormatter(resUrl.getCreatedAt()));
-                return Optional.of(resUrl);
+                var resultUrlId = resultSet.getLong("url_id");
+                UrlCheck urlCheck = new UrlCheck(resultStatusCode,
+                        resultTitle,
+                        resultH1,
+                        resultDescription,
+                        resultUrlId);
+                urlCheck.setId(resultId);
+                urlCheck.setCreatedAt(resultCreatedAt);
+                urlCheck.setFormattedTimestamp(TimestampFormatter.dateFormatter(urlCheck.getCreatedAt()));
+                listOfChecks.add(urlCheck);
             }
-            return Optional.empty();
+            return listOfChecks;
         }
-    }*/
+    }
 
     public static List<UrlCheck> getEntities() throws SQLException {
-        String sql = "SELECT * FROM url_checks";
+        String sql = "SELECT * FROM url_checks GROUP BY url_id ORDER BY created_at DESC";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             var resultSet = preparedStatement.executeQuery();
@@ -64,10 +74,39 @@ public class UrlCheckRepository extends BaseRepository {
                 String title = resultSet.getString("title");
                 String h1 = resultSet.getString("h1");
                 String description = resultSet.getString("description");
-                UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description);
+                Long urlId = resultSet.getLong("url_id");
+                UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, urlId);
                 urlCheck.setId(resultSet.getLong("id"));
                 urlCheck.setCreatedAt(resultSet.getTimestamp("created_at"));
                 urlCheck.setUrlId(resultSet.getLong("url_id"));
+                result.add(urlCheck);
+            }
+            return result;
+        }
+    }
+
+    public static List<UrlCheck> getLatestChecks() throws SQLException {
+        String sql = "SELECT * "
+                + "FROM url_checks "
+                + "INNER JOIN (SELECT url_id, MAX(created_at) as max_created_at "
+                + "FROM url_checks "
+                + "GROUP BY url_id) inner_select "
+                + "ON url_checks.url_id = inner_select.url_id "
+                + "AND url_checks.created_at = inner_select.max_created_at";
+        try (var conn = dataSource.getConnection();
+             var preparedStatement = conn.prepareStatement(sql)) {
+            var resultSet = preparedStatement.executeQuery();
+            var result = new ArrayList<UrlCheck>();
+            while (resultSet.next()) {
+                int statusCode = resultSet.getInt("status_code");
+                String title = resultSet.getString("title");
+                String h1 = resultSet.getString("h1");
+                String description = resultSet.getString("description");
+                Long urlId = resultSet.getLong("url_id");
+                UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, urlId);
+                urlCheck.setId(resultSet.getLong("id"));
+                urlCheck.setCreatedAt(resultSet.getTimestamp("created_at"));
+                urlCheck.setFormattedTimestamp(TimestampFormatter.dateFormatter(resultSet.getTimestamp("created_at")));
                 result.add(urlCheck);
             }
             return result;
