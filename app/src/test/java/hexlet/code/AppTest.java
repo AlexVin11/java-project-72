@@ -32,7 +32,7 @@ public class AppTest {
     private static String htmlFileContent;
     private static MockWebServer mockWebServer;
 
-    public static String readFile(Path path) throws Exception{
+    public static String readFile(Path path) throws Exception {
         return Files.readString(pathToHtmlFile);
     }
 
