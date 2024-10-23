@@ -1,4 +1,4 @@
-package repository;
+package hexlet.code.repository;
 
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;

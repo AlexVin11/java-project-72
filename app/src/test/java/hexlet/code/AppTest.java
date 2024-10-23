@@ -12,8 +12,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import repository.UrlCheckRepository;
-import repository.UrlRepository;
+import hexlet.code.repository.UrlCheckRepository;
+import hexlet.code.repository.UrlRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,7 +41,6 @@ public class AppTest {
         mockWebServer = new MockWebServer();
         htmlFileContent = readFile(pathToHtmlFile);
         MockResponse mockedResponse = new MockResponse()
-                //.addHeader("content-type: text/html")
                 .setBody(htmlFileContent)
                 .setResponseCode(200);
         mockWebServer.enqueue(mockedResponse);
@@ -87,10 +86,10 @@ public class AppTest {
     @Test
     public void saveCorrectUrlTwiceReturnSuccess() throws SQLException {
         JavalinTest.test(app, (server, client) -> {
-            String firstRequestParam = "url=https://www.example.com";
-            client.post(NamedRoutes.urlsPath(), firstRequestParam);
-            String secondRequestParam = "url=https://www.example.com";
-            client.post(NamedRoutes.urlsPath(), secondRequestParam);
+            String firstRequest = "url=https://www.example.com";
+            client.post(NamedRoutes.urlsPath(), firstRequest);
+            String secondRequest = "url=https://www.example.com";
+            client.post(NamedRoutes.urlsPath(), secondRequest);
             var firstRequestFound = client.get(NamedRoutes.urlPath("1"));
             var secondRequestFound = client.get(NamedRoutes.urlPath("2"));
             assertThat(UrlRepository.getEntities().size() == 1);

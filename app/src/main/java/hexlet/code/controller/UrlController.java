@@ -7,8 +7,8 @@ import hexlet.code.model.UrlCheck;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
-import repository.UrlCheckRepository;
-import repository.UrlRepository;
+import hexlet.code.repository.UrlCheckRepository;
+import hexlet.code.repository.UrlRepository;
 
 import java.net.MalformedURLException;
 import java.net.URI;

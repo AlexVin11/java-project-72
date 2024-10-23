@@ -11,7 +11,7 @@ import hexlet.code.controller.UrlController;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
-import repository.BaseRepository;
+import hexlet.code.repository.BaseRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;

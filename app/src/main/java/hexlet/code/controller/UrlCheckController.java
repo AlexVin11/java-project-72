@@ -11,8 +11,8 @@ import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import repository.UrlCheckRepository;
-import repository.UrlRepository;
+import hexlet.code.repository.UrlCheckRepository;
+import hexlet.code.repository.UrlRepository;
 
 import java.sql.SQLException;
 

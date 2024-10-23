@@ -1,4 +1,4 @@
-package repository;
+package hexlet.code.repository;
 
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
@@ -106,7 +106,6 @@ public class UrlCheckRepository extends BaseRepository {
                 UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, urlId);
                 urlCheck.setId(resultSet.getLong("id"));
                 urlCheck.setCreatedAt(resultSet.getTimestamp("created_at"));
-                urlCheck.setFormattedTimestamp(TimestampFormatter.dateFormatter(resultSet.getTimestamp("created_at")));
                 result.add(urlCheck);
             }
             return result;
