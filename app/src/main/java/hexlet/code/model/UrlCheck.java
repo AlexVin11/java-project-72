@@ -22,8 +22,6 @@ public class UrlCheck {
     private String description;
     private Long urlId;
     private Timestamp createdAt;
-    @ToString.Exclude
-    private String formattedTimestamp;
 
     public UrlCheck(int statusCode, String title, String h1, String description, Long urlId) {
         this.statusCode = statusCode;
