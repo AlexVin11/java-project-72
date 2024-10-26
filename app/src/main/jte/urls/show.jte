@@ -1,4 +1,5 @@
 @import hexlet.code.dto.urls.UrlPage
+@import hexlet.code.util.TimestampFormatter
 @param UrlPage page
 
 @template.layout.page(
@@ -24,7 +25,7 @@ content = @`
                 </tr>
                 <tr>
                     <td>Дата создания</td>
-                    <td>${page.getUrl().getFormattedTimestamp()}</td>
+                    <td>${page.getUrl().getCreatedAt()..toLocalDateTime().format(TimestampFormatter.formatter)}</td>
                 </tr>
                 </tbody>
             </table>
@@ -64,7 +65,7 @@ content = @`
                                     ${check.getDescription()}
                                 </td>
                                 <td>
-                                    ${check.getFormattedTimestamp()}
+                                    ${check.getCreatedAt().toLocalDateTime().format(TimestampFormatter.formatter)}
                                 </td>
                             </tr>
                         @endfor
