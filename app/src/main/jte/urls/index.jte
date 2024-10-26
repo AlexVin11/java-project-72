@@ -1,4 +1,5 @@
 @import hexlet.code.dto.urls.UrlsPage
+@import hexlet.code.util.TimestampFormatter
 @param UrlsPage page
 
 @template.layout.page(
@@ -39,7 +40,7 @@ content = @`
                                 @for(var check : page.getChecks())
                                     @if(check.getUrlId() == url.getId())
                                         <td>
-                                            ${check.getFormattedTimestamp()}
+                                            ${check.getCreatedAt().toLocalDateTime().format(TimestampFormatter.formatter)}
                                         </td>
                                         <td>
                                             ${check.getStatusCode()}
