@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class AppTest {
+public final class AppTest {
     private final Context ctx = mock(Context.class);
     Javalin app;
     private static Path pathToHtmlFile = Paths.get(
