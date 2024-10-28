@@ -13,16 +13,15 @@ import java.util.Optional;
 public class UrlRepository extends BaseRepository {
 
     public static void save(Url url) throws SQLException {
-        String sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+        String sql = "INSERT INTO urls (name) VALUES (?)";
         try (var conn = dataSource.getConnection();
             var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, url.getName());
-            preparedStatement.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
             preparedStatement.executeUpdate();
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 url.setId(generatedKeys.getLong(1));
-                //url.setCreatedAt(new Timestamp(System.currentTimeMillis())/*generatedKeys.getTimestamp(2)*/);
+                url.setCreatedAt(new Timestamp(System.currentTimeMillis())/*generatedKeys.getTimestamp(2)*/);
             } else {
                 throw new SQLException("DB have not returned an id or createdAt after saving an entity");
             }
@@ -39,9 +38,9 @@ public class UrlRepository extends BaseRepository {
                 var resultName = resultSet.getString("name");
                 var resultCreatedAt = resultSet.getTimestamp("created_at");
                 var resultId = resultSet.getLong("id");
-                Url resUrl = new Url(resultName, resultCreatedAt);
+                Url resUrl = new Url(resultName);
                 resUrl.setId(resultId);
-                //resUrl.setCreatedAt(resultCreatedAt);
+                resUrl.setCreatedAt(resultCreatedAt);
                 List<UrlCheck> checks = UrlCheckRepository.findByUrlId(resultId);
                 resUrl.setChecks(checks);
                 return Optional.of(resUrl);
@@ -60,9 +59,9 @@ public class UrlRepository extends BaseRepository {
                 var resultName = resultSet.getString("name");
                 var resultId = resultSet.getLong("id");
                 var resultCreatedAt = resultSet.getTimestamp("created_at");
-                Url resUrl = new Url(resultName, resultCreatedAt);
+                Url resUrl = new Url(resultName);
                 resUrl.setId(resultId);
-                //resUrl.setCreatedAt(resultCreatedAt);
+                resUrl.setCreatedAt(resultCreatedAt);
                 return Optional.of(resUrl);
             }
             return Optional.empty();
@@ -77,10 +76,9 @@ public class UrlRepository extends BaseRepository {
             var result = new ArrayList<Url>();
             while (resultSet.next()) {
                 var name = resultSet.getString("name");
-                var createdAt = resultSet.getTimestamp("created_at");
-                var url = new Url(name, createdAt);
+                var url = new Url(name);
                 url.setId(resultSet.getLong("id"));
-                //url.setCreatedAt(resultSet.getTimestamp("created_at"));
+                url.setCreatedAt(resultSet.getTimestamp("created_at"));
                 result.add(url);
             }
             return result;
