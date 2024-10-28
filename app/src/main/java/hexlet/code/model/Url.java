@@ -25,6 +25,6 @@ public final class Url {
 
     public Url(String name) {
         this.name = name;
-        checks = new LinkedList<>();
+        this.checks = new LinkedList<>();
     }
 }
