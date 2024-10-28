@@ -25,7 +25,7 @@ content = @`
                 </tr>
                 <tr>
                     <td>Дата создания</td>
-                    <td>${page.getUrl().getCreatedAt()..toLocalDateTime().format(TimestampFormatter.formatter)}</td>
+                    <td>${page.getUrl().getCreatedAt()..toLocalDateTime().format(TimestampFormatter.formatterType1)}</td>
                 </tr>
                 </tbody>
             </table>
@@ -65,7 +65,7 @@ content = @`
                                     ${check.getDescription()}
                                 </td>
                                 <td>
-                                    ${check.getCreatedAt().toLocalDateTime().format(TimestampFormatter.formatter)}
+                                    ${check.getCreatedAt().toLocalDateTime().format(TimestampFormatter.formatterType1)}
                                 </td>
                             </tr>
                         @endfor

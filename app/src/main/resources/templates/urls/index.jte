@@ -40,7 +40,7 @@ content = @`
                                 @for(var check : page.getChecks())
                                     @if(check.getUrlId() == url.getId())
                                         <td>
-                                            ${check.getCreatedAt().toLocalDateTime().format(TimestampFormatter.formatter)}
+                                            ${check.getCreatedAt().toLocalDateTime().format(TimestampFormatter.formatterType1)}
                                         </td>
                                         <td>
                                             ${check.getStatusCode()}
