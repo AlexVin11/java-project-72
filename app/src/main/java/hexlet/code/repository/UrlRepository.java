@@ -5,6 +5,7 @@ import hexlet.code.model.UrlCheck;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class UrlRepository extends BaseRepository {
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 url.setId(generatedKeys.getLong(1));
-                url.setCreatedAt(generatedKeys.getTimestamp(2));
+                url.setCreatedAt(new Timestamp(System.currentTimeMillis())/*generatedKeys.getTimestamp(2)*/);
             } else {
                 throw new SQLException("DB have not returned an id or createdAt after saving an entity");
             }
