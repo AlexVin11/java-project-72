@@ -48,8 +48,8 @@ public class UrlController {
 
     public static void add(Context ctx) throws SQLException,
             IllegalArgumentException {
-        var name = ctx.formParam("url");
         try {
+            var name = ctx.formParam("url");
             URL absoluteUrl = new URI(name).toURL();
             HttpURLConnection huc = (HttpURLConnection) absoluteUrl.openConnection();
             huc.setRequestMethod("HEAD");
