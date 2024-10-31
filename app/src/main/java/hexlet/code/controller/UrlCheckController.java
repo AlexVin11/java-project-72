@@ -14,6 +14,10 @@ import org.jsoup.nodes.Document;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.SQLException;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
@@ -36,6 +40,7 @@ public class UrlCheckController {
         Url url = UrlRepository.findById(urlId)
                 .orElseThrow(() -> new NotFoundResponse("Url not found"));
         try {
+            URL urlForConnection = new URI(url.getName()).toURL();
             HttpResponse<String> httpResponse = Unirest.get(url.getName()).asString();
             int statusCode = httpResponse.getStatus();
             String responseBody = httpResponse.getBody();
@@ -52,8 +57,10 @@ public class UrlCheckController {
             ctx.sessionAttribute("flash", "Страница успешно проверена");
             ctx.sessionAttribute("flashType", "alert-success");
             ctx.redirect(NamedRoutes.urlPath(urlId));
-        } catch (UnirestException e) {
-            throw new UnirestException("Error during URL check: " + e.getMessage(), e);
+        } catch (UnirestException | URISyntaxException | MalformedURLException e) {
+            ctx.sessionAttribute("flash", "Некорректный адрес");
+            ctx.sessionAttribute("flashType", "alert-danger");
+            ctx.redirect(NamedRoutes.urlPath(url.getId()));
         }
     }
 }
