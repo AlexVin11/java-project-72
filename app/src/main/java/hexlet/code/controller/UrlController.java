@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
@@ -50,28 +51,34 @@ public class UrlController {
             IllegalArgumentException {
         try {
             var name = ctx.formParam("url");
-            URL absoluteUrl = new URI(name).toURL();
-            HttpURLConnection huc = (HttpURLConnection) absoluteUrl.openConnection();
-            huc.setRequestMethod("HEAD");
-            int responseCodeOfUrl = huc.getResponseCode();
-            if (responseCodeOfUrl != HttpURLConnection.HTTP_OK) {
+            if (Objects.isNull(name)) {
                 ctx.sessionAttribute("flash", "Некорректный URL");
                 ctx.sessionAttribute("flashType", "alert-danger");
                 ctx.redirect(NamedRoutes.rootPath());
             } else {
-                String schema = absoluteUrl.toURI().getScheme();
-                String authority = absoluteUrl.toURI().getAuthority();
-                Url url = new Url(schema + "://" + authority);
-                Optional<Url> foundedUrl = UrlRepository.findByName(url.getName());
-                if (foundedUrl.isEmpty()) {
-                    UrlRepository.save(url);
-                    ctx.sessionAttribute("flash", "Страница успешно добавлена");
-                    ctx.sessionAttribute("flashType", "alert-success");
+                URL absoluteUrl = new URI(name).toURL();
+                HttpURLConnection huc = (HttpURLConnection) absoluteUrl.openConnection();
+                huc.setRequestMethod("HEAD");
+                int responseCodeOfUrl = huc.getResponseCode();
+                if (responseCodeOfUrl != HttpURLConnection.HTTP_OK) {
+                    ctx.sessionAttribute("flash", "Некорректный URL");
+                    ctx.sessionAttribute("flashType", "alert-danger");
+                    ctx.redirect(NamedRoutes.rootPath());
                 } else {
-                    ctx.sessionAttribute("flash", "Страница уже существует");
-                    ctx.sessionAttribute("flashType", "alert-info");
+                    String schema = absoluteUrl.toURI().getScheme();
+                    String authority = absoluteUrl.toURI().getAuthority();
+                    Url url = new Url(schema + "://" + authority);
+                    Optional<Url> foundedUrl = UrlRepository.findByName(url.getName());
+                    if (foundedUrl.isEmpty()) {
+                        UrlRepository.save(url);
+                        ctx.sessionAttribute("flash", "Страница успешно добавлена");
+                        ctx.sessionAttribute("flashType", "alert-success");
+                    } else {
+                        ctx.sessionAttribute("flash", "Страница уже существует");
+                        ctx.sessionAttribute("flashType", "alert-info");
+                    }
+                    ctx.redirect(NamedRoutes.urlsPath());
                 }
-                ctx.redirect(NamedRoutes.urlsPath());
             }
         } catch (URISyntaxException | IllegalArgumentException | IOException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
