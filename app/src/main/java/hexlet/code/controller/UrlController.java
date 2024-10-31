@@ -12,6 +12,7 @@ import hexlet.code.repository.UrlRepository;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -58,6 +59,7 @@ public class UrlController {
             } else {
                 URL absoluteUrl = new URI(name).toURL();
                 HttpURLConnection huc = (HttpURLConnection) absoluteUrl.openConnection();
+                huc.setInstanceFollowRedirects(false);
                 huc.setRequestMethod("HEAD");
                 int responseCodeOfUrl = huc.getResponseCode();
                 if (responseCodeOfUrl != HttpURLConnection.HTTP_OK) {
