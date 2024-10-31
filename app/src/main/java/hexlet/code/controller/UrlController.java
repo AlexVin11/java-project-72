@@ -10,7 +10,8 @@ import io.javalin.http.NotFoundResponse;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -50,20 +51,29 @@ public class UrlController {
         var name = ctx.formParam("url");
         try {
             URL absoluteUrl = new URI(name).toURL();
-            String schema = absoluteUrl.toURI().getScheme();
-            String authority = absoluteUrl.toURI().getAuthority();
-            Url url = new Url(schema + "://" + authority);
-            Optional<Url> foundedUrl = UrlRepository.findByName(url.getName());
-            if (foundedUrl.isEmpty()) {
-                UrlRepository.save(url);
-                ctx.sessionAttribute("flash", "Страница успешно добавлена");
-                ctx.sessionAttribute("flashType", "alert-success");
+            HttpURLConnection huc = (HttpURLConnection) absoluteUrl.openConnection();
+            huc.setRequestMethod("HEAD");
+            int responseCodeOfUrl = huc.getResponseCode();
+            if (responseCodeOfUrl != HttpURLConnection.HTTP_OK) {
+                ctx.sessionAttribute("flash", "Некорректный URL");
+                ctx.sessionAttribute("flashType", "alert-danger");
+                ctx.redirect(NamedRoutes.rootPath());
             } else {
-                ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.sessionAttribute("flashType", "alert-info");
+                String schema = absoluteUrl.toURI().getScheme();
+                String authority = absoluteUrl.toURI().getAuthority();
+                Url url = new Url(schema + "://" + authority);
+                Optional<Url> foundedUrl = UrlRepository.findByName(url.getName());
+                if (foundedUrl.isEmpty()) {
+                    UrlRepository.save(url);
+                    ctx.sessionAttribute("flash", "Страница успешно добавлена");
+                    ctx.sessionAttribute("flashType", "alert-success");
+                } else {
+                    ctx.sessionAttribute("flash", "Страница уже существует");
+                    ctx.sessionAttribute("flashType", "alert-info");
+                }
+                ctx.redirect(NamedRoutes.urlsPath());
             }
-            ctx.redirect(NamedRoutes.urlsPath());
-        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
+        } catch (URISyntaxException | IllegalArgumentException | IOException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flashType", "alert-danger");
             ctx.redirect(NamedRoutes.rootPath());
